@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduScience Pro - Console Administrateur</title>
+    <style>
+        /* CSS Global */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0b0b1a;
+            color: white;
+        }
+
+        header {
+            background: linear-gradient(90deg, #6a00ff, #a100ff);
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .admin-badge {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            background: #ff0055;
+            color: white;
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            background: #11112a;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            background: #1c1c3a;
+            border-radius: 8px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        nav a:hover, nav a.active {
+            background: #6a00ff;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #151530;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            box-shadow: 0 0 10px rgba(106, 0, 255, 0.2);
+        }
+
+        h2, h3 {
+            margin-top: 0;
+            color: #b580ff;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            background: #1c1c3a;
+            border: 1px solid #6a00ff;
+            color: white;
+            border-radius: 6px;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Conteneur mot de passe avec icône œil */
+        .password-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-container input {
+            padding-right: 45px; /* Laisse de la place pour l'icône */
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            user-select: none;
+        }
+
+        .forgot-password-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #b580ff;
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .forgot-password-link:hover {
+            color: #6a00ff;
+            text-decoration: underline;
+        }
+
+        .file-upload-btn {
+            background: #2a2a4a;
+            border: 1px dashed #6a00ff;
+            padding: 12px;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 8px 0;
+            display: block;
+            font-weight: bold;
+        }
+        .file-upload-btn:hover {
+            background: #34345c;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        /* --- FIL D'ACTUALITÉ STYLE FACEBOOK --- */
+        .fb-post {
+            background: #181836;
+            border: 1px solid #292954;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .fb-post-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #222244;
+        }
+
+        .fb-post-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .fb-avatar {
+            width: 40px;
+            height: 40px;
+            background: #6a00ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .fb-post-text {
+            padding: 15px;
+            font-size: 15px;
+            line-height: 1.5;
+            color: #e4e6eb;
+        }
+
+        .fb-post-media {
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-height: 450px;
+            overflow: hidden;
+            border-top: 1px solid #222244;
+            border-bottom: 1px solid #222244;
+        }
+
+        .fb-post-media img, .fb-post-media video {
+            width: 100%;
+            height: auto;
+            max-height: 450px;
+            object-fit: contain;
+        }
+
+        .fb-post-actions {
+            padding: 10px 15px;
+            display: flex;
+            gap: 15px;
+            border-top: 1px solid #222244;
+        }
+
+        .fb-post-comments {
+            background: #12122b;
+            padding: 15px;
+            font-size: 13px;
+        }
+
+        /* Interface Chat */
+        .chat-container { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media (min-width: 600px) { .chat-container { grid-template-columns: 200px 1fr; } }
+        .chat-sidebar { background: #11112a; padding: 10px; border-radius: 8px; border: 1px solid #3a3a5e; }
+        .chat-tab { padding: 10px; margin: 5px 0; background: #1c1c3a; border-radius: 6px; cursor: pointer; text-align: center; }
+        .chat-tab.active { background: #6a00ff; font-weight: bold; }
+        .chat-box { background: #11112a; border-radius: 8px; border: 1px solid #3a3a5e; display: flex; flex-direction: column; height: 400px; }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .message { background: #1c1c3a; padding: 10px; border-radius: 8px; max-width: 80%; align-self: flex-start; }
+        .message.me { background: #6a00ff; align-self: flex-end; }
+        .msg-meta { font-size: 11px; color: #aaa; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 10px; }
+        .chat-input-area { display: flex; align-items: center; padding: 10px; background: #151530; border-top: 1px solid #3a3a5e; gap: 10px; }
+        .chat-input-area input[type="text"] { margin: 0; flex: 1; }
+
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+        .grid-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 750px) { .grid-layout { grid-template-columns: 2fr 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <span id="header-text">🎓 EduScience - Plateforme éducative</span>
+        <span id="admin-indicator" class="admin-badge" style="display: none;">[ADMIN]</span>
+    </header>
+
+    <nav id="main-nav">
+        <a onclick="go('home')" class="nav-link active">Accueil</a>
+        <a onclick="go('login')" class="nav-link" id="nav-login">Connexion</a>
+        <a onclick="go('register')" class="nav-link" id="nav-register">Inscription</a>
+        <a onclick="go('dashboard')" class="nav-link" id="nav-dashboard" style="display:none;">Dashboard</a>
+        <a onclick="go('courses')" class="nav-link" id="nav-courses" style="display:none;">Cours & Dépôts</a>
+        <a onclick="go('chat')" class="nav-link" id="nav-chat" style="display:none;">Messagerie</a>
+        <a onclick="go('news')" class="nav-link" id="nav-news" style="display:none;">Actualités</a>
+        <a onclick="go('profile')" class="nav-link" id="nav-profile" style="display:none;">Profil</a>
+    </nav>
+
+    <div class="container">
+
+        <!-- 1. ACCUEIL -->
+        <section id="page-home" class="page-section active">
+            <div class="card">
+                <h2>📚 Bienvenue sur EduScience</h2>
+                <p>Espace de partage de connaissances universitaires et de modération de contenus.</p>
+                <button onclick="go('login')">Se connecter à la console</button>
+            </div>
+            <div class="card">
+                <h3>📰 Dernières actualités du campus</h3>
+                <div id="home-news-preview"></div>
+            </div>
+        </section>
+
+        <!-- 2. CONNEXION -->
+        <section id="page-login" class="page-section">
+            <div class="card">
+                <h2>Connexion Sécurisée</h2>
+                <p style="color: #ff4d4d; font-size: 13px; margin-bottom: 15px;">
+                    📢 <strong>Note Admin :</strong> Utilisez la clé d'accès administrateur définie pour gérer la plateforme.
+                </p>
+                <form onsubmit="handleLogin(event)">
+                    <input type="email" id="login-email" placeholder="Adresse Email" required>
+                    
+                    <!-- Conteneur avec option Visionner / Masquer -->
+                    <div class="password-container">
+                        <input type="password" id="login-pass" placeholder="Mot de passe" required>
+                        <span class="toggle-password" onclick="togglePasswordVisibility('login-pass', this)">👁️</span>
+                    </div>
+
+                    <button type="submit" style="width: 100%; margin-top: 10px;">Ouvrir la session</button>
+                </form>
+                
+                <!-- Lien Mot de passe oublié -->
+                <a class="forgot-password-link" onclick="handleForgotPassword()">Mot de passe oublié ?</a>
+            </div>
+        </section>
+
+        <!-- 3. INSCRIPTION -->
+        <section id="page-register" class="page-section">
+            <div class="card">
+                <h2>Créer un compte étudiant</h2>
+                <form onsubmit="handleRegister(event)">
+                    <input type="text" id="reg-name" placeholder="Nom complet" required>
+                    <input type="email" id="reg-email" placeholder="Email étudiant" required>
+                    <div class="password-container">
+                        <input type="password" id="register-pass" placeholder="Mot de passe" required>
+                        <span class="toggle-password" onclick="togglePasswordVisibility('register-pass', this)">👁️</span>
+                    </div>
+                    <button type="submit" style="width: 100%; margin-top: 10px;">S'enregistrer</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 4. DASHBOARD -->
+        <section id="page-dashboard" class="page-section">
+            <div class="card">
+                <h2 id="welcome-user">👋 Bienvenue</h2>
+                <p>Espace de travail actif. Utilisez les menus pour distribuer les cours ou modérer le réseau.</p>
+            </div>
+            <div class="card">
+                <h3>📚 Raccourcis</h3>
+                <button onclick="go('courses')" style="margin-right: 5px;">Dépôt de Documents</button>
+                <button onclick="go('news')" class="btn-secondary">Publier une Actualité</button>
+            </div>
+        </section>
+
+        <!-- 5. COURS & DÉPÔTS -->
+        <section id="page-courses" class="page-section">
+            <div class="grid-layout">
+                <div>
+                    <h2>📚 Documents partagés</h2>
+                    <div id="courses-list"></div>
+                </div>
+                <div>
+                    <div class="card" style="margin-top:0;">
+                        <h3>📤 Déposer un cours/TD</h3>
+                        <form onsubmit="handleUploadContent(event)">
+                            <select id="upload-category">
+                                <option value="Mathématiques">Mathématiques</option>
+                                <option value="Physique">Physique</option>
+                                <option value="Informatique">Informatique</option>
+                            </select>
+                            <input type="text" id="upload-title" placeholder="Titre du document" required>
+                            <textarea id="upload-desc" placeholder="Résumé ou instructions du document..." required></textarea>
+                            
+                            <label class="file-upload-btn">
+                                📁 Charger le document local
+                                <input type="file" id="upload-local-file" style="display:none;" onchange="updateFileLabel(this, 'file-chosen-name')">
+                            </label>
+                            <div id="file-chosen-name" style="font-size:12px; color:#aaa; margin-bottom:10px; text-align:center;">Aucun fichier sélectionné</div>
+                            
+                            <button type="submit" style="width:100%;">Mettre en ligne</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. MESSAGERIE -->
+        <section id="page-chat" class="page-section">
+            <h2>💬 Messagerie Instantanée</h2>
+            <div class="chat-container">
+                <div class="chat-sidebar">
+                    <div class="chat-tab active" id="tab-group" onclick="switchChat('group')">👥 Salon Général</div>
+                    <div style="font-size: 12px; color: #aaa; margin: 15px 5px 5px 5px; font-weight: bold;">CHATS PRIVÉS</div>
+                    <div class="chat-tab" id="tab-private1" onclick="switchChat('prof')">👨‍🏫 Prof. Martin</div>
+                    <div class="chat-tab" id="tab-private2" onclick="switchChat('student')">🧑‍🎓 Amine (Master)</div>
+                </div>
+                <div class="chat-box">
+                    <div class="chat-messages" id="chat-messages-container"></div>
+                    <div class="chat-input-area">
+                        <label style="cursor:pointer; font-size:20px;" title="Joindre un fichier">
+                            📁
+                            <input type="file" id="chat-file-input" style="display:none;" onchange="sendChatFile()">
+                        </label>
+                        <input type="text" id="chat-input" placeholder="Écrivez un message..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                        <button onclick="sendChatMessage()">Envoyer</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. ACTUALITÉS -->
+        <section id="page-news" class="page-section">
+            <div class="grid-layout">
+                <div>
+                    <h2>📰 Fil d'actualités</h2>
+                    <div id="news-feed-container"></div>
+                </div>
+                <div>
+                    <div class="card" style="margin-top:0;">
+                        <h3>✍️ Créer un Post multimédia</h3>
+                        <form onsubmit="handlePublishNews(event)">
+                            <input type="text" id="news-title" placeholder="Titre ou Sujet du post" required>
+                            <textarea id="news-content" placeholder="Exprimez-vous ou ajoutez une description..." required></textarea>
+                            
+                            <label class="file-upload-btn">
+                                🖼️ Ajouter une Photo / Vidéo locale
+                                <input type="file" id="news-media-file" accept="image/*,video/*" style="display:none;" onchange="updateFileLabel(this, 'media-chosen-name')">
+                            </label>
+                            <div id="media-chosen-name" style="font-size:12px; color:#aaa; margin-bottom:10px; text-align:center;">Aucun média sélectionné</div>
+
+                            <button type="submit" style="width:100%;">Publier sur le fil</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. PROFIL -->
+        <section id="page-profile" class="page-section">
+            <h2>👤 Profil & Rôle Système</h2>
+            <div class="card">
+                <h2 id="profile-name">Visiteur</h2>
+                <p><strong>Statut d'accès :</strong> <span id="profile-role" style="color: #b580ff;">Étudiant</span></p>
+                <p><strong>Réseau :</strong> EduScience Hub</p>
+                <button onclick="logout()" class="btn-danger" style="margin-top:10px;">Fermer la session</button>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Logique Applicative JavaScript -->
+    <script>
+        // --- CONFIGURATION STRICTE DES ACCÈS ---
+        const ADMIN_EMAIL = "admin@eduscience.fr";
+        const ADMIN_PASS = "Admin@2026!";
+
+        let currentUser = "Visiteur";
+        let isAdmin = false;
+        let activeChatChannel = "group";
+
+        const initialCourses = [
+            { id: 1, category: "Physique", title: "Mécanique Quantique", desc: "Introduction aux équations d'onde.", file: "cours_quantique.pdf", author: "Prof. Martin" }
+        ];
+
+        const initialNews = [
+            { id: 1, title: "🚀 Lancement de la plateforme", content: "Bienvenue sur le nouveau réseau universitaire EduScience. Partagez vos documents et collaborez directement !", mediaUrl: "", mediaType: "", author: "Système", likes: 24, liked: false, comments: ["Super projet !", "Pratique pour les cours."] }
+        ];
+
+        const chatDatabase = { group: [], prof: [], student: [] };
+
+        // --- FONCTIONS VISIBILITÉ MOT DE PASSE ET MOT DE PASSE OUBLIÉ ---
+        function togglePasswordVisibility(inputId, toggleIcon) {
+            const passwordInput = document.getElementById(inputId);
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleIcon.innerText = "🙈";
+            } else {
+                passwordInput.type = "password";
+                toggleIcon.innerText = "👁️";
+            }
+        }
+
+        function handleForgotPassword() {
+            const email = prompt("Veuillez saisir votre adresse e-mail pour recevoir le lien de réinitialisation :");
+            if (email) {
+                if (email.trim() === ADMIN_EMAIL) {
+                    alert(`🔐 Rappel Sécurité Admin :\nLes clés d'accès de l'administrateur système principal sont fixes.\nIdentifiant : ${ADMIN_EMAIL}`);
+                } else {
+                    alert(`📧 Un e-mail de récupération vient d'être envoyé à l'adresse : ${email}\nVeuillez vérifier votre boîte de réception.`);
+                }
+            }
+        }
+
+        function updateFileLabel(input, labelId) {
+            const label = document.getElementById(labelId);
+            if (input.files && input.files.length > 0) {
+                label.innerText = `✅ Fichier chargé : ${input.files[0].name}`;
+                label.style.color = "#00ff99";
+            } else {
+                label.innerText = "Aucun fichier sélectionné";
+                label.style.color = "#aaa";
+            }
+        }
+
+        // --- GESTION ROUTAGE ---
+        function go(pageId) {
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            const targetSection = document.getElementById('page-' + pageId);
+            if (targetSection) targetSection.classList.add('active');
+
+            const links = document.querySelectorAll('.nav-link');
+            links.forEach(link => link.classList.remove('active'));
+            const activeLink = Array.from(links).find(link => link.getAttribute('onclick').includes(`'${pageId}'`));
+            if (activeLink) activeLink.classList.add('active');
+
+            if (pageId === 'home' || pageId === 'news') renderNews();
+            if (pageId === 'courses') renderCourses();
+            if (pageId === 'chat') renderChatMessages();
+        }
+
+        // --- GESTION CONNEXION CONTROLE ADMINISTRATEUR ---
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+
+            if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
+                currentUser = "Administrateur";
+                isAdmin = true;
+                document.getElementById('admin-indicator').style.display = 'inline-block';
+                document.getElementById('profile-role').innerText = "Administrateur Suprême (Droits de modération)";
+                document.getElementById('profile-role').style.color = "#ff0055";
+                alert("Accès accordé. Mode Administrateur activé.");
+            } else {
+                currentUser = email.split('@')[0];
+                currentUser = currentUser.charAt(0).toUpperCase() + currentUser.slice(1);
+                isAdmin = false;
+                document.getElementById('admin-indicator').style.display = 'none';
+                document.getElementById('profile-role').innerText = "Étudiant Universitaire";
+                document.getElementById('profile-role').style.color = "#b580ff";
+            }
+
+            activateSession();
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            currentUser = document.getElementById('reg-name').value;
+            isAdmin = false;
+            document.getElementById('admin-indicator').style.display = 'none';
+            activateSession();
+        }
+
+        function activateSession() {
+            document.getElementById('welcome-user').innerText = `👋 Session de : ${currentUser}`;
+            document.getElementById('profile-name').innerText = currentUser;
+
+            ['nav-dashboard', 'nav-courses', 'nav-chat', 'nav-news', 'nav-profile'].forEach(id => {
+                document.getElementById(id).style.display = 'block';
+            });
+            document.getElementById('nav-login').style.display = 'none';
+            document.getElementById('nav-register').style.display = 'none';
+
+            go('dashboard');
+        }
+
+        function logout() {
+            ['nav-dashboard', 'nav-courses', 'nav-chat', 'nav-news', 'nav-profile'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+            document.getElementById('nav-login').style.display = 'block';
+            document.getElementById('nav-register').style.display = 'block';
+            document.getElementById('admin-indicator').style.display = 'none';
+            isAdmin = false;
+            
+            // Vider les champs pour plus de sécurité
+            document.getElementById('login-email').value = "";
+            document.getElementById('login-pass').value = "";
+            go('home');
+        }
+
+        // --- FIL DE PUBLICATIONS RENDU STYLE FACEBOOK ---
+        function renderNews() {
+            const feed = document.getElementById('news-feed-container');
+            const preview = document.getElementById('home-news-preview');
+            
+            if (feed) feed.innerHTML = "";
+            if (preview) preview.innerHTML = "";
+
+            initialNews.forEach(item => {
+                let mediaBlock = "";
+                if (item.mediaUrl) {
+                    if (item.mediaType.startsWith('image/')) {
+                        mediaBlock = `<div class="fb-post-media"><img src="${item.mediaUrl}"></div>`;
+                    } else if (item.mediaType.startsWith('video/')) {
+                        mediaBlock = `<div class="fb-post-media"><video src="${item.mediaUrl}" controls></video></div>`;
+                    }
+                }
+
+                const postHTML = `
+                    <div class="fb-post">
+                        <div class="fb-post-header">
+                            <div class="fb-post-author">
+                                <div class="fb-avatar">${item.author.charAt(0)}</div>
+                                <div>
+                                    <strong style="color:#fff;">${item.author}</strong>
+                                    <div style="font-size:11px; color:#aaa; margin-top:2px;">Publié à l'instant</div>
+                                </div>
+                            </div>
+                            ${isAdmin ? `<button class="btn-danger" style="padding:4px 10px; font-size:11px;" onclick="deleteNews(${item.id})">Supprimer</button>` : ''}
+                        </div>
+                        <div class="fb-post-text">
+                            <strong style="color: #b580ff; font-size:16px; display:block; margin-bottom:5px;">${item.title}</strong>
+                            ${item.content}
+                        </div>
+                        ${mediaBlock}
+                        <div class="fb-post-actions">
+                            <button onclick="likeNews(${item.id})" style="background:transparent; color:#aaa; padding:5px;">${item.liked ? '❤️ Aimé' : '🤍 J\'aime'} (${item.likes})</button>
+                            <button onclick="commentNews(${item.id})" style="background:transparent; color:#aaa; padding:5px;">💬 Commenter (${item.comments.length})</button>
+                        </div>
+                        ${item.comments.length > 0 ? `
+                            <div class="fb-post-comments">
+                                ${item.comments.map(c => `<div style="margin:4px 0; color:#ccc;"><strong>🔹 User :</strong> ${c}</div>`).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+
+                if (feed) feed.insertAdjacentHTML('beforeend', postHTML);
+                if (preview) preview.insertAdjacentHTML('beforeend', postHTML);
+            });
+        }
+
+        function handlePublishNews(event) {
+            event.preventDefault();
+            const title = document.getElementById('news-title').value;
+            const content = document.getElementById('news-content').value;
+            const fileInput = document.getElementById('news-media-file').files[0];
+
+            if (fileInput) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    pushPost(title, content, e.target.result, fileInput.type);
+                };
+                reader.readAsDataURL(fileInput);
+            } else {
+                pushPost(title, content, "", "");
+            }
+        }
+
+        function pushPost(title, content, mediaUrl, mediaType) {
+            initialNews.unshift({
+                id: Date.now(),
+                title: title,
+                content: content,
+                mediaUrl: mediaUrl,
+                mediaType: mediaType,
+                author: currentUser,
+                likes: 0,
+                liked: false,
+                comments: []
+            });
+
+            document.getElementById('news-title').value = "";
+            document.getElementById('news-content').value = "";
+            document.getElementById('news-media-file').value = "";
+            document.getElementById('media-chosen-name').innerText = "Aucun média sélectionné";
+            document.getElementById('media-chosen-name').style.color = "#aaa";
+
+            renderNews();
+        }
+
+        function deleteNews(id) {
+            const index = initialNews.findIndex(n => n.id === id);
+            if (index !== -1) { initialNews.splice(index, 1); renderNews(); }
+        }
+
+        function likeNews(id) {
+            const item = initialNews.find(n => n.id === id);
+            if (item) { item.liked ? (item.likes--, item.liked = false) : (item.likes++, item.liked = true); renderNews(); }
+        }
+
+        function commentNews(id) {
+            const text = prompt("Votre commentaire :");
+            if (text && text.trim() !== "") {
+                const item = initialNews.find(n => n.id === id);
+                if (item) { item.comments.push(text); renderNews(); }
+            }
+        }
+
+        // --- GESTION DE DÉPÔT COURS ---
+        function renderCourses() {
+            const container = document.getElementById('courses-list');
+            container.innerHTML = "";
+            initialCourses.forEach(course => {
+                const card = document.createElement('div');
+                card.className = "card";
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:between;">
+                        <span style="background:#6a00ff; padding:2px 6px; border-radius:4px; font-size:11px;">${course.category}</span>
+                    </div>
+                    <h3>${course.title}</h3>
+                    <p style="color:#ccc; font-size:14px;">${course.desc}</p>
+                    <button onclick="alert('Ouverture virtuelle')">📂 Fichier lié : ${course.file}</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function handleUploadContent(event) {
+            event.preventDefault();
+            const cat = document.getElementById('upload-category').value;
+            const title = document.getElementById('upload-title').value;
+            const desc = document.getElementById('upload-desc').value;
+            const file = document.getElementById('upload-local-file').files[0];
+
+            initialCourses.unshift({
+                id: Date.now(),
+                category: cat,
+                title: title,
+                desc: desc,
+                file: file ? file.name : "Document_Universitaire.pdf",
+                author: currentUser
+            });
+
+            document.getElementById('upload-title').value = "";
+            document.getElementById('upload-desc').value = "";
+            document.getElementById('upload-local-file').value = "";
+            document.getElementById('file-chosen-name').innerText = "Aucun fichier sélectionné";
+            document.getElementById('file-chosen-name').style.color = "#aaa";
+
+            renderCourses();
+        }
+
+        // --- INTERFACE MESSAGERIE (CHAT) ---
+        function switchChat(channel) {
+            activeChatChannel = channel;
+            document.getElementById('tab-group').className = "chat-tab" + (channel === 'group' ? ' active' : '');
+            document.getElementById('tab-private1').className = "chat-tab" + (channel === 'prof' ? ' active' : '');
+            document.getElementById('tab-private2').className = "chat-tab" + (channel === 'student' ? ' active' : '');
+            renderChatMessages();
+        }
+
+        function renderChatMessages() {
+            const container = document.getElementById('chat-messages-container');
+            container.innerHTML = "";
+            const messages = chatDatabase[activeChatChannel] || [];
+            messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = "message" + (msg.isMe ? " me" : "");
+                div.innerHTML = `<div class="msg-meta"><strong>${msg.sender}</strong></div><div>${msg.text}</div>`;
+                container.appendChild(div);
+            });
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            if (!input.value.trim()) return;
+            chatDatabase[activeChatChannel].push({ sender: currentUser, text: input.value, isMe: true });
+            input.value = "";
+            renderChatMessages();
+        }
+
+        function sendChatFile() {
+            const fileInput = document.getElementById('chat-file-input');
+            if (fileInput.files.length === 0) return;
+            chatDatabase[activeChatChannel].push({ sender: currentUser, text: `📁 Pièce jointe : <strong>${fileInput.files[0].name}</strong>`, isMe: true });
+            fileInput.value = "";
+            renderChatMessages();
+        }
+
+        renderNews();
+    </script>
+</body>
+</html>
